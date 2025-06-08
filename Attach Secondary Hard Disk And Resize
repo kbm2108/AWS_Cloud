@@ -1,0 +1,112 @@
+                                                          ***************************************
+                                                                Attach a Secondary Disk
+                                                          ***************************************
+
+# First go to volumes, create a new volume
+
+# Select the type of disk (gp2,gp3) , you can customise the size, IOPS and throughput field based on your requirement
+
+# Remember to create the volume in the same availablility zone as your EC2 instance
+
+# After creating the volume, attach the new volume to your EC2 instance
+
+# Verify on your EC2 instance
+lsblk
+
+NAME     MAJ:MIN   RM  SIZE RO TYPE MOUNTPOINTS
+loop0      7:0      0 27.2M  1 loop /snap/amazon-ssm-agent/11320
+loop1      7:1      0 73.9M  1 loop /snap/core22/1963
+loop2      7:2      0 50.9M  1 loop /snap/snapd/24505
+xvda     202:0      0    8G  0 disk
+├─xvda1  202:1      0    7G  0 part /
+├─xvda14 202:14     0    4M  0 part
+├─xvda15 202:15     0  106M  0 part /boot/efi
+└─xvda16 259:0      0  913M  0 part /boot
+xvdbb    202:13568  0   10G  0 disk
+
+# Now we need to format the disk as its a raw disk
+file -s /dev/xvdbb
+
+/dev/xvdbb: data
+mkfs.xfs /dev/xvdbb
+meta-data=/dev/xvdbb             isize=512    agcount=4, agsize=655360 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=1
+         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=4096   blocks=2621440, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=16384, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+
+# Now we need to create a mount point in order to use this disk
+mkdir /secondary-disk
+mount /dev/xvdbb /secondary-disk/
+
+lsblk
+NAME     MAJ:MIN   RM  SIZE RO TYPE MOUNTPOINTS
+loop0      7:0      0 27.2M  1 loop /snap/amazon-ssm-agent/11320
+loop1      7:1      0 73.9M  1 loop /snap/core22/1963
+loop2      7:2      0 50.9M  1 loop /snap/snapd/24505
+xvda     202:0      0    8G  0 disk
+├─xvda1  202:1      0    7G  0 part /
+├─xvda14 202:14     0    4M  0 part
+├─xvda15 202:15     0  106M  0 part /boot/efi
+└─xvda16 259:0      0  913M  0 part /boot
+xvdbb    202:13568  0   10G  0 disk /secondary-disk
+
+file -s /dev/xvdbb
+/dev/xvdbb: SGI XFS filesystem data (blksz 4096, inosz 512, v2 dirs)
+
+                                                          ***************************************
+                                                                Resize the Secondary Disk
+                                                          ***************************************
+
+# Suppose I want to increase the volume from 10G to 15G. Go to the disk you want to resize. Choose modify the volume option, change the size and save the changes ( In AWS you can only increase the size, it wont allow to decrease the size)
+
+# Verify
+
+lsblk
+NAME     MAJ:MIN   RM  SIZE RO TYPE MOUNTPOINTS
+loop0      7:0      0 27.2M  1 loop /snap/amazon-ssm-agent/11320
+loop1      7:1      0 73.9M  1 loop /snap/core22/1963
+loop2      7:2      0 50.9M  1 loop /snap/snapd/24505
+xvda     202:0      0    8G  0 disk
+├─xvda1  202:1      0    7G  0 part /
+├─xvda14 202:14     0    4M  0 part
+├─xvda15 202:15     0  106M  0 part /boot/efi
+└─xvda16 259:0      0  913M  0 part /boot
+xvdbb    202:13568  0   15G  0 disk /secondary-disk
+
+# But the mount point will still show the disk size has not increased because the file system size has not been updated. In order to update the file system size , use the below command
+
+xfs_growfs /secondary-disk/
+meta-data=/dev/xvdbb             isize=512    agcount=4, agsize=655360 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=1        finobt=1, sparse=1, rmapbt=1
+         =                       reflink=1    bigtime=1 inobtcount=1 nrext64=0
+data     =                       bsize=4096   blocks=2621440, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=16384, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+data blocks changed from 2621440 to 3932160
+
+# Verify that the file system size has changed or not 
+df  -hT
+Filesystem     Type   Size  Used Avail Use% Mounted on
+/dev/root      ext4   6.8G  2.0G  4.8G  29% /
+tmpfs          tmpfs  479M     0  479M   0% /dev/shm
+tmpfs          tmpfs  192M  896K  191M   1% /run
+tmpfs          tmpfs  5.0M     0  5.0M   0% /run/lock
+/dev/xvda16    ext4   881M   86M  734M  11% /boot
+/dev/xvda15    vfat   105M  6.2M   99M   6% /boot/efi
+tmpfs          tmpfs   96M   12K   96M   1% /run/user/1000
+/dev/xvdbb     xfs     15G  326M   15G   3% /secondary-disk
+
+
+
+
+
