@@ -6,7 +6,7 @@
 
 # Add the below steps while launching a EC2 instance under user_data section
 
-#!bin/bash
+#!/bin/bash
 sudo apt-get update
 sudo apt install apache2 -y
 sudo systemctl start apache2 && systemctl enable apache2
