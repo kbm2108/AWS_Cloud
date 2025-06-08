@@ -1,20 +1,18 @@
-                                                ************************
-                                                Installing web server on EC2
-                                                ************************
+                                                *************************************
+                                                   Hosting A Static Website on EC2 
+                                                *************************************
+# Launch a Ubuntu EC2 instance and login inside it.
 
-1)	Launch a Ubuntu EC2 instance and login inside it.
+# Update the system packages 
+    sudo apt-get update
 
-2)	Update the system packages 
-    # sudo apt-get update
+# Install the apache2 package
+    sudo apt install apache2 -y
 
-3) Install the apache2 package
-    # sudo apt install apache2 -y
+# Start and enable the apache service
+    sudo systemctl start apache2 && systemctl enable apache2
 
-4) Start and enable the apache service
-   # sudo systemctl start apache2 && systemctl enable apache2
+# Remove the default test page index.html under /var/www/html, create a new test page index.html and write something inside it
+    vim index.html
 
-5) Remove the default test page index.html under /var/www/html, create a new test page index.html and write something inside it
-   # vim index.html
-     Hi! We are testing this webpage
-
-6) Get the public IP and paste on the browser, it should display the text (You need to add the HTTP protocol in security groups for this to work) 
+# Get the public IP and paste on the browser, it should display the text (You need to add the HTTP protocol in security groups for this to work) 
