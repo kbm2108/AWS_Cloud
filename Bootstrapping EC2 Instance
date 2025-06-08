@@ -1,0 +1,16 @@
+                                                *************************************************
+                                                  Bootstrapping a EC2 To Host a Static Website
+                                                *************************************************
+
+# We can bootstrap a EC2 server to host a static web page as follows
+
+# Add the below steps while launching a EC2 instance under user_data section
+
+sudo apt-get update
+sudo apt install apache2 -y
+sudo systemctl start apache2 && systemctl enable apache2
+rm -rf /var/www/html/index.html
+echo "Hi! We are testing this webpage" >> /var/www/html/index.html
+
+
+# Get the server's public IP and paste on the browser to check if it works (you need to allow http protocol in security group for this to work)
