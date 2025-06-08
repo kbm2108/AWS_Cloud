@@ -59,6 +59,8 @@ xvdbb    202:13568  0   10G  0 disk /secondary-disk
 file -s /dev/xvdbb
 /dev/xvdbb: SGI XFS filesystem data (blksz 4096, inosz 512, v2 dirs)
 
+# You may add the entry in /etc/fstab for permanent mounting
+
                                                           ***************************************
                                                                 Resize the Secondary Disk
                                                           ***************************************
