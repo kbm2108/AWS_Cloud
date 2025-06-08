@@ -1,0 +1,5 @@
+# Snapshot is a point in time backup of your volume
+
+# You can take a snapshot of your volume using "Create Snapshot" Option , once the snapshot is saved you can anytime retrieve the volume in case of accidental volume deletion
+
+# Go to snapshot, then use "Create volume from snapshot". Remember to create the volume in the same availability zone as your EC2 instance. Once the volume is created, attach to your instance and mount it.
