@@ -27,4 +27,6 @@
 
 # Add the AWS provided name servers mentioned in your hosted zone in your domain panel name servers
 
-# Create a CNAME record, it will take some time for the settings to reflect. After a few hours check your domain and your static website will be available 
+# Create a CNAME record, in the value mention your bucket endpoint. It will take some time for the settings to reflect. After a few hours check your domain and your static website will be available 
+
+# Alternatively you can use AWS amplify to deploy your S3 static content, add your custom domains or enable firewall. AWS will take care of SSL certifictes
