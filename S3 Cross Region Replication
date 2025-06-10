@@ -1,0 +1,9 @@
+# First create a destination bucket in the another region (verisioning should be enabled for cross region replication to work)
+
+# In the source bucket create a new replication rule. Browse the destination bucket, choose the IAM role (or create new)
+
+# You can also change destination storage class (Standard IA, OneZone, Glacier etc) and save
+
+# It will ask if you want to replicate existing objects, if you say yes a batch job will run to replicate the existing objects
+
+# Once the rule is created, whenever any object is added in your source bucket the repplication will run and the object will sync to destination bucket
