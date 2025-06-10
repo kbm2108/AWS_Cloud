@@ -2,7 +2,7 @@
 
 # In the source bucket create a new replication rule. Browse the destination bucket, choose the IAM role (or create new)
 
-# You can also change destination storage class (Standard IA, OneZone, Glacier etc) and save
+# You can also change destination storage class (Standard IA, OneZone, Glacier etc)
 
 # It will ask if you want to replicate existing objects, if you say yes a batch job will run to replicate the existing objects
 
