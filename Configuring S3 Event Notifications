@@ -1,0 +1,38 @@
+                                              ********************************************
+                                                    Configuring S3 Event Notifications
+                                              ********************************************
+# First create a SNS topic
+# Add a subscription
+# Replace existing topic policy by editing it. Copy the ARN number of the bucket, bucket name and account ID and edit in below policy
+
+{
+    "Version": "2012-10-17",
+    "Id": "example-ID",
+    "Statement": [
+        {
+            "Sid": "Example SNS topic policy",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "s3.amazonaws.com"
+            },
+            "Action": [
+                "SNS:Publish"
+            ],
+            "Resource": "<SNS-topic-ARN>",
+            "Condition": {
+                "ArnLike": {
+                    "aws:SourceArn": "arn:aws:s3:*:*:<bucket-name>"
+                },
+                "StringEquals": {
+                    "aws:SourceAccount": "<bucket-owner-account-id>"
+                }
+            }
+        }
+    ]
+} 
+
+# Create a EMAIL subscription ,you will get a email. Confirm the subscription, once you confirm the status will be confirmed
+
+# Now go to your bucket and create a event notification. You can customise the event types
+# Select destination as SNS topic and select your SNS topic
+# You will get an email if there is any activity in your S3 bucket
