@@ -1,0 +1,30 @@
+# Create a bucket,allow public access while creation
+
+# Enable static website hosting ,add index document name and redirection rules (if available)
+
+# Add a bucket policy to grant public read access for your website
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<Bucket-Name>/*"
+            ]
+        }
+    ]
+}
+
+# Add your static content in the bucket , copy the bucket website endpoint and you are good to go
+
+# If you have a domain , you can add the hosted zone in Route 53 (you need to create hosted zone and S3 bucket with the your domain name)
+
+# Add the AWS provided name servers mentioned in your hosted zone in your domain panel name servers
+
+# Create a CNAME record, it will take some time for the settings to reflect. After a few hours check your domain and your static website will be available 
