@@ -1,0 +1,68 @@
+                                        ************************************************
+                                                  Cloudwatch Agent for EC2 Metrics
+                                        ************************************************
+
+# Download and install the cloudwatch agent
+$ wget https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb
+$ dpkg -i -E ./amazon-cloudwatch-agent.deb
+
+# Create IAM Role, select AWS created role "CloudWatchAgentServerPolicy" and create role. Attach to your EC2 Instance
+
+# In order to allow agent to set log retention policy, add below additional permission in your role
+
+In the Permissions tab, choose Add permissions, Create inline policy. Choose the JSON tab
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "logs:PutRetentionPolicy",
+      "Resource": "*"
+    }
+  ]
+}
+
+# In order to allow agent to fetch logs, add below additional permission in your role
+In the Permissions tab, choose Add permissions, Create inline policy. Choose the JSON tab
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "EnableCreationAndManagementOfCloudwatchLogEvents",
+            "Effect": "Allow",
+            "Action": [
+                "logs:GetLogEvents",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "EnableCreationAndManagementOfCloudwatchLogGroupsAndStreams",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams",
+                "logs:PutRetentionPolicy",
+                "logs:CreateLogGroup"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+
+# Run the agent configuratuon script
+$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
+
+# Choose default values for everything except below values
+CollectD - No
+Logs - /var/log/syslog
+Xraytrace - No 
+SSM Paremeter - No
+
+# Start the agent
+
+$ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:<configuration-file-path>
+
+Config file location :  /opt/aws/amazon-cloudwatch-agent/bin/config.json
