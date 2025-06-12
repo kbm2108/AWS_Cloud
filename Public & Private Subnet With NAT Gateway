@@ -1,0 +1,54 @@
+                                  ******************************************************************************
+                                                    Public & Private Subnet With NAT Gateway
+                                  ******************************************************************************
+
+# Create a custom VPC, choose a CIDR (ex 10.0.0.0/16)
+
+# Create a public subnet,select custom VPC, choose a AZ (1a), choose a CIDR (10.0.0.0/24)
+
+# Create a private subnet,select custom VPC, choose a AZ (1b), choose a CIDR (10.0.1.0/24)
+
+# Create a new internet gateway,attach it to your custom VPC. Internet gateways connect our VPC to internet
+
+# Create a new route table, select custom VPC . Add internet route (0.0.0.0) and select your Internet gateway
+Select subnet association , edit it and select your public subnet. This will connect your public subnet to the internet
+
+# Go to your public subnet and enable auto assign IPv4 address so that any public instances created in your public instance get a public IP
+
+# Launch a public instance (ex webserver) , select custom VPC, public subnet . Connect your instance
+
+# Launch a private instance (ex db server), select custom VPC, private subnet. This instance wont get any public IP as i
+Make sure you enforce the rules in security group that it can be only ssh from the public subnet CIDR range. Add a another ICMP rule to test connectivity, allow it only from public subnet CIDR range
+
+# Only option to connect is via public instance , this is also called as  a bastion host
+For setting this up, copy the keypair from local system to your public instance
+$ scp -i keypair.pem keypair.pem ubuntu@<public-ip>:~
+
+$ chmod 600 keypair.pem (Change the permissions of your keypair)
+After this connect your private instance with the keypair from your public instance
+$ ssh -i keypair.pem ubuntu@<private-ip>
+
+(By default all instances within a VPC can communicate with each other privately)
+
+# The private instance doesnt have connectivity with the internet, so you will not be able to update any packages as you are not able to connect to internet
+
+# In this scenarios, we attach a NAT gateway to the private subnet
+Nat gateways are deployed in public subnet so that they can connect to the internet (VV IMP)
+
+# Create Nat gateway, select your public subnet , allocate a public IP address and created
+
+# Now you need to add the NAT gateway route in your main route table
+Add internet route (0.0.0.0) and select your NAT gateway
+Your private instance will be connected to internet now.
+
+# AWS NAT gateway is a 1 way NAT. This means that if any request goes from private instance to the internet, its response is automatically allowed
+But a request from internet to the NAT gateway is not allowed
+
+                					*************************
+                							Cleanup
+                					*************************
+
+# Delete EC2 instances
+# Delete NAT gateway
+# Release elastic IP
+# Delete custom VPC
